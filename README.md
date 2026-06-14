@@ -72,17 +72,7 @@ OPENROUTER_API_KEY=your_openrouter_api_key
 \`\`\`
 
 ### 4. Start the Application
-Start the backend (from the \`server\` directory):
-\`\`\`bash
-node index.js
-\`\`\`
-
-Start the frontend (from the root directory):
-\`\`\`bash
-npm run dev
-\`\`\`
-
-Your app should now be running at \`http://localhost:5173\` and connected to the backend API at \`http://localhost:5000\`.
+Backend rendered at Render and Frontend at Vercel
 
 ---
 
