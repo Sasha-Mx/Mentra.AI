@@ -2,7 +2,7 @@
 
 ### From Confused Student to Placed Professional
 
-## 🧠 Tagline
+## Tagline
 
 India's first Generative + Agentic AI Career Intelligence Platform that identifies skill gaps, monitors market demands, and continuously adapts personalized learning journeys.
 
@@ -95,7 +95,7 @@ Placement Readiness
 
 ---
 
-# 🔥 Core Features
+# Core Features
 
 ## 🧠 AI Skill Gap Analyzer
 
@@ -409,7 +409,7 @@ Roles:
 
 ---
 
-# ❤️ Closing Note
+# Closing Note
 
 Mentra.AI was built around a simple question:
 
