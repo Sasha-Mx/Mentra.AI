@@ -39,31 +39,60 @@ const generateAIResponse = async (prompt) => {
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const apiKey = process.env.OPENROUTER_API_KEY;
-      if (!apiKey) {
-        throw new Error("OPENROUTER_API_KEY is missing. Please check your .env file.");
+      const geminiKey = process.env.GEMINI_API_KEY?.trim();
+      const openRouterKey = process.env.OPENROUTER_API_KEY?.trim();
+
+      if (!geminiKey && !openRouterKey) {
+        throw new Error("API Key is missing. Please configure GEMINI_API_KEY or OPENROUTER_API_KEY in your .env file.");
       }
 
       const logMsg = attempt > 1 
-        ? `[AI] Sending request to OpenRouter (Attempt ${attempt}/${MAX_RETRIES})...\n`
-        : `[AI] Sending request to OpenRouter...\n`;
+        ? `[AI] Sending request (Attempt ${attempt}/${MAX_RETRIES})...\n`
+        : `[AI] Sending request...\n`;
       fs.appendFileSync('debug.log', logMsg);
 
-      const response = await axios.post("https://openrouter.ai/api/v1/chat/completions", {
-        model: "google/gemini-2.5-flash",
-        max_tokens: 8000,
-        messages: [{ role: "user", content: prompt }]
-      }, {
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "HTTP-Referer": "https://mentra.ai",
-          "X-Title": "Mentra AI Career Coach"
-        },
-        timeout: 45000 // Increased to 45 seconds for complex roadmap generation
-      });
+      let response;
+      let rawContent;
 
-      const rawContent = response.data.choices[0].message.content;
+      if (geminiKey) {
+        // Direct Google AI Studio API call
+        response = await axios.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`, {
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            responseMimeType: "application/json",
+            maxOutputTokens: 8000
+          }
+        }, {
+          headers: {
+            "Content-Type": "application/json"
+          },
+          timeout: 45000
+        });
+
+        if (response.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+          rawContent = response.data.candidates[0].content.parts[0].text;
+        } else {
+          throw new Error("Invalid response format from Google Gemini API");
+        }
+      } else {
+        // OpenRouter API call
+        response = await axios.post("https://openrouter.ai/api/v1/chat/completions", {
+          model: "google/gemini-2.5-flash",
+          max_tokens: 3000,
+          messages: [{ role: "user", content: prompt }]
+        }, {
+          headers: {
+            "Authorization": `Bearer ${openRouterKey}`,
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://mentra.ai",
+            "X-Title": "Mentra AI Career Coach"
+          },
+          timeout: 45000
+        });
+
+        rawContent = response.data.choices[0].message.content;
+      }
+
       fs.appendFileSync('debug.log', `[AI] Raw response length: ${rawContent.length}\n`);
       
       try {
@@ -82,10 +111,10 @@ const generateAIResponse = async (prompt) => {
       
       fs.appendFileSync('debug.log', `[AI] ATTEMPT ${attempt} FAILED: ${errMsg}\n`);
 
-      // 401: Unauthorized - usually API key issues
-      if (statusCode === 401) {
+      // Stop retrying on auth errors (401/403)
+      if (statusCode === 401 || statusCode === 403) {
         fs.appendFileSync('debug.log', `[AI] AUTH ERROR - Stopping retries. Check API key.\n`);
-        throw new Error("AI Authentication failed. Please verify your OPENROUTER_API_KEY.");
+        throw new Error("AI Authentication failed. Please verify your API Key configuration.");
       }
 
       // Don't retry on other client errors (4xx) except 429
@@ -117,7 +146,7 @@ const MAX_TOKENS = {
   RESUME_ANALYZE:  2000,
   RESUME_REWRITE:  1500,
   RESUME_KEYWORDS: 800,
-  DEFAULT: 8000
+  DEFAULT: 3000
 };
 
 /**

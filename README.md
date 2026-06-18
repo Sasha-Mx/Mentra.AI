@@ -210,61 +210,43 @@ Placement Readiness
 
 ---
 
-## 🤖 Agentic AI Layer
+## 🧠 Agentic Intelligence Layer
 
-Mentra.AI continuously adapts to users through:
+### Why Mentra.AI is Agentic
+Mentra.AI does not simply generate static content on demand. The platform continuously evaluates user progress, recalculates readiness, updates skill gaps, adapts learning priorities, generates new missions, and provides updated guidance based on changing user performance and career goals. This creates a continuous **observe → analyze → decide → act** loop rather than a single prompt-response interaction.
 
-* Progress monitoring
-* Dynamic mission generation
-* Readiness recalculation
-* Roadmap adaptation
-* Personalized guidance updates
+### Core Framework Modules
+1. **Calibration & Profiling Module**: Evaluates user inputs (role, year, skills) and dynamically computes their *Experience Tier* (Beginner, Intermediate, Advanced) and initial *Market Fit Score* based on curated hiring trend references.
+2. **Market Intelligence Module**: Utilizes industry benchmark datasets, market intelligence models, and role-specific skill mappings to compute payoff potential and target company expectations.
+3. **Daily Mission Engine (Bloom's Taxonomy)**: Translates broad roadmap goals into a sequence of actionable *Learn → Practice → Build* tasks, forcing proof of work.
+4. **Grading & Assessment Loop (Interview Engine)**: Conducts interactive mock interviews, adjusting difficulty based on identified skill gaps and grading user responses to dynamically recalculate their *Readiness Score*.
+5. **Resume Benchmarking Module**: Audits resumes against Google’s XYZ format, Harvard OCS guidelines, and ATS parameters, pinpointing weak points and proposing rewrites.
 
----
+### Agentic Loop Workflow
 
-# 🏗 System Architecture
+```mermaid
+graph TD
+    classDef stepStyle fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#fff;
+    classDef startStyle fill:#4f46e5,stroke:#312e81,stroke-width:2px,color:#fff;
 
-User Onboarding
+    Start["User Onboarding"]:::startStyle
+    Gap["Skill Gap Analysis"]:::stepStyle
+    Readiness["Readiness Calculation"]:::stepStyle
+    Roadmap["Roadmap Generation"]:::stepStyle
+    Missions["Daily Missions"]:::stepStyle
+    Tracking["Progress Tracking"]:::stepStyle
+    Evaluation["Career Agent Evaluation"]:::stepStyle
+    Updates["Roadmap & Guidance Updates"]:::stepStyle
 
-↓
-
-Skill Assessment
-
-↓
-
-Gap Analysis Engine
-
-↓
-
-Readiness Calculation
-
-↓
-
-Personalized Roadmap Generation
-
-↓
-
-Daily Missions
-
-↓
-
-Mock Interviews
-
-↓
-
-Resume Optimization
-
-↓
-
-Application Tracking
-
-↓
-
-Career Decision Intelligence
-
-↓
-
-Placement Readiness
+    Start --> Gap
+    Gap --> Readiness
+    Readiness --> Roadmap
+    Roadmap --> Missions
+    Missions --> Tracking
+    Tracking --> Evaluation
+    Evaluation --> Updates
+    Updates -->|Continuous Feedback Loop| Gap
+```
 
 ---
 
@@ -348,20 +330,24 @@ cd backend
 npm install
 ```
 
-## Configure Environment Variables
+### 3. Environment Setup
 
-Create a `.env` file:
+Create a `.env` file in the `server` directory:
 
 ```env
+PORT=5000
 MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_secret_key
 OPENROUTER_API_KEY=your_openrouter_api_key
+VITE_YOUTUBE_API_KEY=your_youtube_api_key
 ```
 
-## Run Backend
+### 4. Start the Application
+
+Start the backend (from the `server` directory):
 
 ```bash
-npm run server
+node index.js
 ```
 
 ## Run Frontend
